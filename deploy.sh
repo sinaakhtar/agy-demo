@@ -115,7 +115,7 @@ token_data = {
         "refresh_token": adc["refresh_token"],
         "expiry": "2026-06-25T12:00:00Z"
     },
-    "auth_method": "browser",
+    "auth_method": "consumer",
     "project_id": "sina-emea-sce01-366810",
     "region": "us-central1"
 }
