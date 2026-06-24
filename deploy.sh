@@ -87,16 +87,21 @@ IMAGE_URI="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO_NAME}/antigravity-demo:
 # 5. Build and Push the Docker container using Google Cloud Build
 echo -e "\n${YELLOW}Generating human user OAuth token for CLI authentication...${NC}"
 python3 -c '
-import json, subprocess
+import json, os, subprocess
 
-with open("/usr/local/google/home/sinanek/.config/gcloud/application_default_credentials.json") as f:
+adc_path = os.path.expanduser("~/.config/gcloud/application_default_credentials.json")
+with open(adc_path) as f:
     adc = json.load(f)
+
+cid = adc["client_id"]
+csec = adc["client_secret"]
+rtoken = adc["refresh_token"]
 
 res = subprocess.check_output([
     "curl", "-s", "-X", "POST", "https://oauth2.googleapis.com/token",
-    "-d", f"client_id={adc[\"client_id\"]}",
-    "-d", f"client_secret={adc[\"client_secret\"]}",
-    "-d", f"refresh_token={adc[\"refresh_token\"]}",
+    "-d", f"client_id={cid}",
+    "-d", f"client_secret={csec}",
+    "-d", f"refresh_token={rtoken}",
     "-d", "grant_type=refresh_token"
 ])
 data = json.loads(res)
