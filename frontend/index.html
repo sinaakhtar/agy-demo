@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Antigravity CLI Interactive Demo</title>
+  
+  <!-- xterm.js styles -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/css/xterm.min.css" />
+  <!-- Custom styles -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Google Fonts - Roboto Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Sidebar for guided demo steps -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <i class="fa-solid fa-square-poll-vertical logo-icon"></i>
+          <span>antigravity</span>
+          <span class="badge">demo</span>
+        </div>
+        <p class="subtitle">Agentic Coding Assistant</p>
+      </div>
+
+      <div class="demo-steps">
+        <h3 class="section-title">Guided Walkthrough</h3>
+        
+        <button class="demo-btn" id="btn-step1" data-command="agy --prompt='Explain the structure of this project. What are the key files?'">
+          <span class="btn-num">1</span>
+          <div class="btn-text">
+            <span class="btn-title">Understand Codebase</span>
+            <span class="btn-desc">Ask agent to analyze the repo</span>
+          </div>
+        </button>
+
+        <button class="demo-btn" id="btn-step2" data-command="agy --prompt='The delete endpoint is failing in unit tests. Find the bug in app.py.'">
+          <span class="btn-num">2</span>
+          <div class="btn-text">
+            <span class="btn-title">Diagnose Bug</span>
+            <span class="btn-desc">Find type mismatch in DELETE</span>
+          </div>
+        </button>
+
+        <button class="demo-btn" id="btn-step3" data-command="agy --prompt='Fix the delete bug in app.py and run pytest to verify the fix.'">
+          <span class="btn-num">3</span>
+          <div class="btn-text">
+            <span class="btn-title">Fix & Verify Bug</span>
+            <span class="btn-desc">Correct code & run tests</span>
+          </div>
+        </button>
+
+        <button class="demo-btn" id="btn-step4" data-command="agy --prompt='Add a &quot;priority&quot; field (low, medium, high) to tasks. Update the API and write a test for it.'">
+          <span class="btn-num">4</span>
+          <div class="btn-text">
+            <span class="btn-title">Add Feature</span>
+            <span class="btn-desc">Extend model & add tests</span>
+          </div>
+        </button>
+      </div>
+
+      <div class="sidebar-footer">
+        <button class="action-btn reset-btn" id="btn-reset" data-command="git reset --hard HEAD && git clean -fd">
+          <i class="fa-solid fa-rotate-left"></i> Reset Environment
+        </button>
+        <p class="footer-note">Running inside isolated container. All changes are temporary.</p>
+      </div>
+    </aside>
+
+    <!-- Terminal Pane -->
+    <main class="terminal-pane">
+      <div class="terminal-header">
+        <div class="terminal-title">
+          <i class="fa-solid fa-terminal"></i> interactive_shell - bash
+        </div>
+        <div class="status-indicator">
+          <span class="dot connected"></span>
+          <span class="status-text" id="connection-status">Connected</span>
+        </div>
+      </div>
+      
+      <!-- Terminal container where xterm.js will mount -->
+      <div id="terminal-container"></div>
+    </main>
+
+  </div>
+
+  <!-- Disconnect Overlay -->
+  <div class="overlay hidden" id="disconnect-overlay">
+    <div class="overlay-card">
+      <i class="fa-solid fa-triangle-exclamation warning-icon"></i>
+      <h2>Session Disconnected</h2>
+      <p>Your interactive container session has ended (inactivity timeout or connection loss).</p>
+      <button class="primary-btn" id="btn-reconnect">
+        <i class="fa-solid fa-power-off"></i> Restart Demo Session
+      </button>
+    </div>
+  </div>
+
+  <!-- xterm.js scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/lib/xterm.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-fit@0.10.0/lib/addon-fit.min.js"></script>
+  
+  <!-- Application script -->
+  <script src="app.js"></script>
+</body>
+</html>

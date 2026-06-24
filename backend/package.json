@@ -1,0 +1,14 @@
+{
+  "name": "antigravity-demo-backend",
+  "version": "1.0.0",
+  "description": "Backend PTY and WebSocket server for Antigravity interactive demo",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "node-pty": "^1.1.0-beta21",
+    "ws": "^8.17.1"
+  }
+}
