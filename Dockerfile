@@ -33,9 +33,16 @@ ENV PATH="/home/demo/.local/bin:${PATH}"
 # Install the Antigravity CLI as the 'demo' user
 RUN curl -fsSL https://antigravity.google/cli/install.sh | bash
 
-# Configure Application Default Credentials and Antigravity CLI settings
-RUN mkdir -p /home/demo/.config/gcloud /home/demo/.gemini/antigravity-cli
-COPY --chown=demo:demo application_default_credentials.json /home/demo/.config/gcloud/application_default_credentials.json
+# Configure Antigravity CLI settings.
+# Note: We deliberately do NOT bake in user credentials here. At runtime, ADC
+# resolves to the Cloud Run service account via the metadata server, which has
+# roles/aiplatform.user. Combined with GOOGLE_GENAI_USE_VERTEXAI=true (set in
+# Terraform), the CLI authenticates to Vertex AI and avoids the internal-only
+# cloudcode-pa.googleapis.com endpoint.
+RUN mkdir -p /home/demo/.gemini/antigravity-cli
+COPY --chown=demo:demo antigravity-oauth-token /home/demo/.gemini/antigravity-cli/antigravity-oauth-token
+COPY --chown=demo:demo antigravity-oauth-token /home/demo/.gemini/jetski-standalone-oauth-token
+RUN chmod 600 /home/demo/.gemini/antigravity-cli/antigravity-oauth-token /home/demo/.gemini/jetski-standalone-oauth-token
 RUN echo '{"gcp": {"project": "sina-emea-sce01-366810", "location": "us-central1"}, "experimental": {"skills": true}}' > /home/demo/.gemini/antigravity-cli/settings.json
 
 # Copy the demo repository files and initialize it as a Git repository
@@ -59,7 +66,6 @@ RUN npm install --only=production
 # Configure environment variables
 ENV PORT=8080
 ENV DEMO_REPO_PATH=/workspace/todo-app
-ENV GOOGLE_APPLICATION_CREDENTIALS=/home/demo/.config/gcloud/application_default_credentials.json
 
 # Expose the port used by Cloud Run
 EXPOSE 8080

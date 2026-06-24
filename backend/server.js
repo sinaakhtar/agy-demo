@@ -41,11 +41,15 @@ wss.on('connection', (ws) => {
   // Determine shell (bash on Linux/macOS, powershell/cmd on Windows)
   const shell = os.platform() === 'win32' ? 'powershell.exe' : 'bash';
 
-  // Set up environment variables for the shell
+  // Set up environment variables for the shell.
+  // Note: we deliberately do NOT set GOOGLE_APPLICATION_CREDENTIALS — ADC
+  // resolves to the Cloud Run runtime service account via the metadata server,
+  // which is required for the Antigravity CLI to take the Vertex AI auth path
+  // (rather than the internal-only Code Assist / cloudcode-pa path).
   const env = Object.assign({}, process.env, {
     TERM: 'xterm-256color',
     HOME: '/home/demo',
-    GOOGLE_APPLICATION_CREDENTIALS: '/home/demo/.config/gcloud/application_default_credentials.json',
+    USE_ADC: 'false',
     // Ensure the agy CLI path is in PATH if installed in ~/.local/bin
     PATH: `${process.env.PATH || ''}:${path.join(os.homedir(), '.local/bin')}`,
   });

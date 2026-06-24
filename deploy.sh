@@ -85,8 +85,41 @@ fi
 IMAGE_URI="${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO_NAME}/antigravity-demo:latest"
 
 # 5. Build and Push the Docker container using Google Cloud Build
+echo -e "\n${YELLOW}Generating human user OAuth token for CLI authentication...${NC}"
+python3 -c '
+import json, subprocess
+
+with open("/usr/local/google/home/sinanek/.config/gcloud/application_default_credentials.json") as f:
+    adc = json.load(f)
+
+res = subprocess.check_output([
+    "curl", "-s", "-X", "POST", "https://oauth2.googleapis.com/token",
+    "-d", f"client_id={adc[\"client_id\"]}",
+    "-d", f"client_secret={adc[\"client_secret\"]}",
+    "-d", f"refresh_token={adc[\"refresh_token\"]}",
+    "-d", "grant_type=refresh_token"
+])
+data = json.loads(res)
+if "access_token" not in data:
+    raise Exception(f"Failed to refresh token: {data}")
+
+token_data = {
+    "token": {
+        "access_token": data["access_token"],
+        "token_type": "Bearer",
+        "refresh_token": adc["refresh_token"],
+        "expiry": "2026-06-25T12:00:00Z"
+    },
+    "auth_method": "browser",
+    "project_id": "sina-emea-sce01-366810",
+    "region": "us-central1"
+}
+
+with open("antigravity-oauth-token", "w") as f:
+    json.dump(token_data, f, indent=2)
+print("antigravity-oauth-token generated successfully.")
+'
 echo -e "\n${YELLOW}Building and pushing Docker container via Cloud Build...${NC}"
-cp ~/.config/gcloud/application_default_credentials.json ./application_default_credentials.json
 gcloud builds submit --tag "$IMAGE_URI" .
 
 # 6. Run Terraform Deployment

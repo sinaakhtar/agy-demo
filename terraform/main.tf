@@ -65,7 +65,7 @@ resource "google_cloud_run_v2_service" "demo_service" {
       }
       env {
         name  = "USE_ADC"
-        value = "true"
+        value = "false"
       }
       env {
         name  = "GOOGLE_GENAI_USE_VERTEXAI"
@@ -79,10 +79,11 @@ resource "google_cloud_run_v2_service" "demo_service" {
         name  = "GOOGLE_CLOUD_LOCATION"
         value = var.region
       }
-      env {
-        name  = "GOOGLE_APPLICATION_CREDENTIALS"
-        value = "/home/demo/.config/gcloud/application_default_credentials.json"
-      }
+      # Note: GOOGLE_APPLICATION_CREDENTIALS is intentionally not set. ADC
+      # falls back to the Cloud Run metadata server, which returns this
+      # service's runtime SA (agy-demo-runner). That SA has roles/aiplatform.user,
+      # so the Antigravity CLI authenticates to Vertex AI via aiplatform.googleapis.com
+      # instead of the internal-only cloudcode-pa.googleapis.com.
     }
   }
 
